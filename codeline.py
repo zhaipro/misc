@@ -1,7 +1,7 @@
+#! python
 # coding: utf-8
-
-import sys
 import os
+import sys
 
 
 l = []
@@ -15,3 +15,4 @@ for path, dirs, fns in os.walk('.'):
 l.sort(reverse=True)
 for lines, path in l:
     print lines, path
+sys.stdout.close()
