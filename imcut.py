@@ -12,9 +12,26 @@ def imcut(im):
     return im
 
 
+def _clip(im, width=1366, height=768):
+    h, w, _ = im.shape
+    y = (h - w * height // width) // 2
+    y = max(y, 0)
+    x = (w - h * width // height) // 2
+    x = max(x, 0)
+    im = im[y:h - y, x:w - x]
+    return im
+
+
+def clip(im, width=1366, height=768):
+    if isinstance(im, str):
+        im = cv2.imread(im)
+    im = _clip(im, width, height)
+    return cv2.resize(im, (width, height))
+
+
 if __name__ == '__main__':
     assert len(sys.argv) >= 2
-    ifn = sys.argv[1]
-    ofn = sys.argv[2] if len(sys.argv) >= 3 else 'a.jpg'
-    im = imcut(ifn)
-    cv2.imwrite(ofn, im)
+    fn = sys.argv[1]
+    im = clip(fn, 750, 500)
+    cv2.imshow('a', im)
+    cv2.waitKey()
