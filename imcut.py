@@ -3,35 +3,33 @@ import sys
 import cv2
 
 
-def imcut(im):
+def imcut(im, width, height, x=0.5, y=0.5, resize=False):
     if isinstance(im, str):
         im = cv2.imread(im)
     h, w, _ = im.shape
-    im = im[:w * 320 // 240]
-    im = cv2.resize(im, (240, 320))
+    ch = max(h - w * height // width, 0)
+    cw = max(w - h * width // height, 0)
+    x, y = int(cw * x), int(ch * y)
+    im = im[y:h - ch + y, x:w - cw + x]
+    if resize:
+        im = cv2.resize(im, (width, height))
     return im
-
-
-def _clip(im, width=1366, height=768):
-    h, w, _ = im.shape
-    y = (h - w * height // width) // 2
-    y = max(y, 0)
-    x = (w - h * width // height) // 2
-    x = max(x, 0)
-    im = im[y:h - y, x:w - x]
-    return im
-
-
-def clip(im, width=1366, height=768):
-    if isinstance(im, str):
-        im = cv2.imread(im)
-    im = _clip(im, width, height)
-    return cv2.resize(im, (width, height))
 
 
 if __name__ == '__main__':
     assert len(sys.argv) >= 2
     fn = sys.argv[1]
-    im = clip(fn, 750, 500)
+    flag = sys.argv[2] if len(sys.argv) >= 3 else 'center'
+    if flag == 'left':
+        x, y = 0, 0.5
+    elif flag == 'right':
+        x, y = 1, 0.5
+    elif flag == 'top':
+        x, y = 0.5, 0
+    elif flag == 'down':
+        x, y = 0.5, 1
+    else:
+        x, y = 0.5, 0.5
+    im = imcut(fn, 240, 320, x=x, y=y)
     cv2.imshow('a', im)
     cv2.waitKey()
