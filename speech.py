@@ -35,6 +35,17 @@ def microsoft_to_audio(text, name, token):
     return r
 
 
+def microsoft_to_text(audio, token):
+    url = 'https://chinaeast2.stt.speech.azure.cn/speech/recognition/conversation/cognitiveservices/v1?language=zh-CN'
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-type': 'audio/wav; codecs=audio/pcm; samplerate=16000',
+        'Accept': 'application/json',
+    }
+    r = requests.post(url, audio, headers=headers)
+    return r
+
+
 if __name__ == '__main__':
     key = 'unknown'
     token = issuetoken(key)
@@ -43,3 +54,6 @@ if __name__ == '__main__':
     r = microsoft_to_audio(text, name, token)
     with open(f'a.mp3', 'wb') as fp:
         fp.write(r.content)
+
+    r = microsoft_to_text(open('test2.wav', 'rb'), token)
+    print(r.json())
