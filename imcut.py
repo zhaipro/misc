@@ -18,8 +18,9 @@ def imcut(im, width, height, x=0.5, y=0.5, r=1.0, resize=False):
 
 if __name__ == '__main__':
     assert len(sys.argv) >= 2
-    fn = sys.argv[1]
+    ifn = sys.argv[1]
     flag = sys.argv[2] if len(sys.argv) >= 3 else 'center'
+    ofn = sys.argv[3] if len(sys.argv) >= 4 else None
     if flag == 'left':
         x, y = 0, 0.5
     elif flag == 'right':
@@ -30,6 +31,9 @@ if __name__ == '__main__':
         x, y = 0.5, 1.0
     else:
         x, y = 0.5, 0.5
-    im = imcut(fn, 240, 320, x=x, y=y, r=0.5, resize=True)
-    cv2.imshow('a', im)
-    cv2.waitKey()
+    im = imcut(ifn, 1920, 1080, x=x, y=y, resize=True)
+    if ofn:
+        cv2.imwrite(ofn, im)
+    else:
+        cv2.imshow('a', im)
+        cv2.waitKey()
