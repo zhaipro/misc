@@ -3,12 +3,14 @@ import sys
 import cv2
 
 
-def imcut(im, width, height, x=0.5, y=0.5, r=1.0, resize=False):
+def imcut(im, width, height, x=0.5, y=0.5, c=0.0, resize=False):
     if isinstance(im, str):
         im = cv2.imread(im)
     h, w, _ = im.shape
-    ch = int(max(h - w * height / width * r, 0))
-    cw = int(max(w - h * width / height * r, 0))
+    ch = max(h - w * height / width, 0)
+    cw = max(w - h * width / height, 0)
+    ch = int(ch + (h - ch) * c)
+    cw = int(cw + (w - cw) * c)
     x, y = int(cw * x), int(ch * y)
     im = im[y:h - ch + y, x:w - cw + x]
     if resize:
