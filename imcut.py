@@ -18,6 +18,26 @@ def imcut(im, width, height, x=0.5, y=0.5, c=0.0, resize=False):
     return im
 
 
+def imcut_ex(im, width, height, x=0.5, y=0.5, c=0.0, resize=False):
+    if isinstance(im, str):
+        im = cv2.imread(im)
+    h, w, _ = im.shape
+    ch = max(h - w * height / width, 0)
+    cw = max(w - h * width / height, 0)
+    ch = int(ch + (h - ch) * c)
+    cw = int(cw + (w - cw) * c)
+    x, y = int((w - cw) * x), int((h - ch) * y)
+    if ch > 0:
+        im[y:-ch] = im[y + ch:]
+        im = im[:-ch]
+    if cw > 0:
+        im[:, x:-cw] = im[:, x + cw:]
+        im = im[:, :-cw]
+    if resize:
+        im = cv2.resize(im, (width, height))
+    return im
+
+
 if __name__ == '__main__':
     assert len(sys.argv) >= 2
     ifn = sys.argv[1]
